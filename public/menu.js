@@ -1,8 +1,8 @@
-const { app, dialog, Menu, shell } = require('electron');
-
+const { app, dialog, Menu, shell, BrowserWindow } = require('electron');
 module.exports = {
   setMainMenu
 };
+const argv = require('yargs').parse(process.argv.slice(1));
 
 const isWindows = process.platform === 'win32';
 const isMac = process.platform === 'darwin';
@@ -101,6 +101,24 @@ function setMainMenu(mainWindow) {
               const url = /^file:\/\/\//.test(fileNames[0]) ? fileNames[0] : `file://${fileNames[0]}`;
               mainWindow.loadURL(url);
             });
+          }
+        },
+        {
+          label: 'New Window',
+          accelerator: 'CmdOrCtrl+N',
+          click() {
+            let child = new BrowserWindow({
+              title: 'Pennywise',
+              width: 700,
+              height: 600,
+              autoHideMenuBar: true,
+              backgroundColor: '#16171a',
+              frame: argv.frameless ? false: true,
+              webPreferences: {
+                plugins: true
+              },
+            })
+            child.loadURL(process.env.APP_URL)
           }
         },
         { role: 'close' },
