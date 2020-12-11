@@ -2,15 +2,29 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const pdfWindow = require('electron-pdf-window');
 const path = require('path');
+const argv = require('yargs').parse(process.argv.slice(1));
 
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
+const os = require('os');
 
 const { setMainMenu } = require('./menu');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+// Add flash support. If $USER_HOME/.pennywise-flash exists as plugin directory or symlink uses that.
+const flashPath = path.join(os.homedir(), ".pennywise-flash");
+if (flashPath && fs.existsSync(flashPath)) {
+  try {
+    app.commandLine.appendSwitch('ppapi-flash-path', fs.realpathSync(flashPath));
+    console.log("Attempting to load flash at " + flashPath)
+  } catch (e) {
+    console.log("Error finding flash at " + flashPath + ": " + e.message);
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -20,8 +34,11 @@ function createWindow() {
     autoHideMenuBar: true,
     backgroundColor: '#16171a',
     show: false,
+    frame: argv.frameless ? false : true,
     webPreferences: {
-      plugins: true
+      plugins: true,
+      nodeIntegration: true,
+      webviewTag: true
     },
   });
 
@@ -97,26 +114,33 @@ function checkAndDownloadUpdate() {
   }
 }
 
+/**
+ * Starts the server on 127.0.0.1:6280 that accepts the URL and loads
+ * that URL in the application
+ */
+function listenUrlLoader() {
+  const server = http.createServer((request, response) => {
+    let target_url = url.parse(request.url, true).query.url;
+    target_url = Array.isArray(target_url) ? target_url.pop : '';
+
+    if (target_url) {
+      mainWindow.webContents.send('url.requested', target_url);
+    }
+
+    response.writeHeader(200);
+    response.end();
+  });
+
+  server.listen(6280, '0.0.0.0');
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
   createWindow();
   checkAndDownloadUpdate();
-  var server = http.createServer((request, response) => {
-    var target_url = url.parse(request.url, true).query.url;
-
-    if (target_url) {
-      if (Array.isArray(target_url)) {
-        target_url = target_url.pop();
-      };
-      mainWindow.webContents.send("url.requested", target_url);
-    };
-
-    response.writeHeader(200);
-    response.end();
-  })
-  server.listen(6280, "0.0.0.0")
+  listenUrlLoader();
 });
 
 // Make the window start receiving mouse events on focus/activate

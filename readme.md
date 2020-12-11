@@ -6,11 +6,11 @@
     <a href="https://github.com/kamranahmedse/pennywise/blob/master/license">
       <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
     </a>
-    <a href="https://github.com/kamranahmedse/pennywise">
+    <a href="https://github.com/kamranahmedse/pennywise/releases">
     	<img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-blue.svg" alt="platforms" />
     </a>
-    <a href="https://github.com/kamranahmedse/pennywise">
-	    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="prs welcome">
+    <a href="https://github.com/kamranahmedse/pennywise/releases">
+	    <img src="https://img.shields.io/github/downloads/kamranahmedse/pennywise/total.svg" alt="prs welcome">
     </a>
   </p>
 </p>
@@ -35,6 +35,14 @@ If you are on MacOS, you can use [Homebrew](https://brew.sh/) to install it
 
 ```
 brew cask install pennywise
+```
+
+### Enable Flash Support
+
+To enable flash support, copy or link Chrome's Pepperflash plugin into your $HOME/.pennywise-flash. You can find the plugin at the installation path of the Chrome. For example, on MacOS, you can do the below to enable Flash support
+
+```
+ln -s ~/Library/Application\ Support/Google/Chrome/PepperFlash/[version]/PepperFlashPlayer.plugin" ~/.pennywise-flash
 ```
 
 ## Usecases
@@ -66,11 +74,13 @@ yarn start
 | **Shortcut**                       | **Description**                  |
 |------------------------------------|----------------------------------|
 | <kbd>Cmd/Ctrl + L</kbd>            | Show Navbar and focus URL input  |
-| <kbd>Cmd/Ctrl + Shift + M</kbd>    | Enable detached mode             |
+| <kbd>Cmd/Ctrl + Shift + D</kbd>    | Enable detached mode             |
+| <kbd>Cmd/Ctrl + M</kbd>            | Refresh Page                     |
 | <kbd>Cmd/Ctrl + Shift + L</kbd>    | Toggle Navbar on WebPages        |
 | <kbd>Cmd/Ctrl + Shift + Up</kbd>   | Increase Opacity                 |
 | <kbd>Cmd/Ctrl + Shift + Down</kbd> | Decrease Opacity                 |
 | <kbd>Cmd/Ctrl + Alt + I</kbd>      | Show Developer Tools             |
+| <kbd>Cmd/Ctrl + [0-9]</kbd>        | Switch Window Opacity            |
 
 > **Note** – Changing the opacity is only supported in Windows and MacOS
 
